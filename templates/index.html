@@ -1,13 +1,40 @@
 <head>
 <title>PiBot</title>
+<script src='/static/scripts/ajax_requests.js'></script>
+<script src='/static/scripts/keyboard_control.js'></script>
+<p id='post_request'></p>
 </head>
 
-<form method='POST' action='/rgb'>
+<h4>LED Control</h4>
+
+<form method='POST' action='/control/rgb/'>
 <input type='text' name='LED_R' placeholder='R'/>
 <input type='text' name='LED_G' placeholder='G'/>
 <input type='text' name='LED_B' placeholder='B'/>
-<input type='submit'/>
+<input type='submit' value='Submit'/>
 </form>
+
+<button onclick='post_request("/control/headlights/", "STATUS=on")'>LED ON</button>
+<button onclick='post_request("/control/headlights/", "STATUS=off")'>LED OFF</button>
+
+<br>
+
+<h4>Direction control</h4>
+
+<label for='keyboard_enable'>Enable keyboard control (WASD, Space for stop).</label>
+<input type='checkbox' id='keyboard_enable'>
+
+<button onclick='post_request("/control/motor/", "DIRECTION=forward")'>/\</button>
+<button onclick='post_request("/control/motor/", "DIRECTION=backward")'>\/</button>
+<button onclick='post_request("/control/motor/", "DIRECTION=left")'>&lt;</button>
+<button onclick='post_request("/control/motor/", "DIRECTION=right")'>&gt;</button>
+<button onclick='post_request("/control/motor/", "DIRECTION=stop")'>Stop</button>
+
+<br>
+
+<h4>Camera</h4>
+<button onclick='post_request("/control/camera/", "MODE=picture")'>Take picture</button>
+<a href='/browse_images/'>Browse images</a>
 
 <p>Stop the server</p>
 <form method='POST' action='/stop_server'>

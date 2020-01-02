@@ -63,14 +63,14 @@ class motor:
         #Start PWM
         #self.PWM1_OUT.start(25)
     #Make the motor go forward
-    def forward(self, speed):
+    def forward(self):
         #self.PWM1_OUT.ChangeDutyCycle(speed)
         GPIO.output(self.PIN1, GPIO.LOW)
         
         GPIO.output(self.PIN2, GPIO.HIGH)
 
     #Make it go backward
-    def backward(self, speed):
+    def backward(self):
         #self.PWM1_OUT.ChangeDutyCycle(speed)
         GPIO.output(self.PIN2, GPIO.LOW)
         

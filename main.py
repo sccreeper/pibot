@@ -1,63 +1,103 @@
-from flask import Flask, redirect, request, render_template, abort
+from flask import Flask, redirect, request, render_template, abort, send_from_directory
 import time, random
 import robot
 import RPi.GPIO as GPIO
+import os
+import datetime
+#Camera libraries
+from picamera import PiCamera
+
         
-#motor_A = robot.motor(
-#motor_B = robot.motor(
+motor_A = robot.motor(1,7)
+motor_B = robot.motor(8,25)
 
-normal_led = robot.LED(2)
+normal_led_one = robot.LED(2)
+normal_led_two = robot.LED(3)
 
-main_led = robot.RGB_LED([17,27,22])
+#main_led = robot.RGB_LED([17,27,22])
 
-"""
-try:
-    colour_completed = True
-    while True:
-        for i in range(255):
-            main_led.colour(i,0,0)
-            time.sleep(0.05)
-        for i in range(255):
-            main_led.colour(255, i, 0)
-            time.sleep(0.05)
-        for i in range(255):
-            main_led.colour(255, 255, i)
-            time.sleep(0.05)
-        for i in range(255):
-            main_led.colour(0,0,i)
-            time.sleep(0.05)
-        for i in range(255):
-            main_led.colour(0, i, 255)
-            time.sleep(0.05)
-        for i in range(255):
-            main_led.colour(i, 255, 255)
-            time.sleep(0.05)
-        #normal_led.on()
-        #main_led.colour(random.randint(0,255), random.randint(0,255), random.randint(0,255))
-        #time.sleep(0.25)
-        #main_led.colour(random.randint(0,255), random.randint(0,255), random.randint(0,255))
-        #normal_led.off()
-        #time.sleep(0.25)
-except KeyboardInterrupt:        
-    time.sleep(10)
-
-    GPIO.cleanup()
-
-"""
+#Flask Server
 app = Flask(__name__)
 
+def date():
+    print("hi i'm date")
+    return 'you summoned date'
+
+#Index
 @app.route('/')
 def web_index():
     return render_template('index.html')
 
-@app.route('/rgb', methods=['POST'])
-def web_rgb():
+#e
+#Code for controlling components like the motors and the RGB etc.
+@app.route('/control/<component>/', methods=['POST'])
+def web_control(component=None):
     if request.method == 'POST':
-        main_led.colour(int(request.form['LED_R']), int(request.form['LED_G']), int(request.form['LED_B']))
-        return redirect('/')
+        if component == 'rgb':
+            main_led.colour(int(request.form['LED_R']), int(request.form['LED_G']), int(request.form['LED_B']))
+            return redirect('/')
+        elif component == 'motor':
+            if request.form['DIRECTION'] == 'forward':
+                #Backwards beacause I soldered it wrong, you might want to change this for your own code.
+                motor_A.backward()
+                motor_B.forward()
+                return 'Motors going forward'
+            elif request.form['DIRECTION'] == 'backward':
+                motor_A.forward()
+                motor_B.backward()
+                return 'Motors going backward'
+            elif request.form['DIRECTION'] == 'left':
+                motor_A.forward()
+                motor_B.forward()
+                return 'Turning left'
+            elif request.form['DIRECTION'] == 'right':
+                motor_A.backward()
+                motor_B.backward()
+                return 'Turning right'
+            else:
+                motor_A.stop()
+                motor_B.stop()
+                return 'Stopped'
+        elif component == 'headlights':
+            if request.form['STATUS'] == 'on':
+                normal_led_one.on()
+                normal_led_two.on()
+                return 'Headlights on'
+            else:
+                normal_led_one.off()
+                normal_led_two.off()
+                return 'Headlights off'
+        elif component == 'camera':
+            if request.form['MODE'] == 'picture':
+                
+                camera = PiCamera()
+                
+                camera.start_preview()
+                time.sleep(5)
+                camera.capture('images/image_{}.jpg'.format(len(os.listdir('images'))+1))
+                camera.stop_preview()
     else:
         return abort(500)
+@app.route('/browse_images/')
+def web_browse():
+    images = os.listdir('images')
 
+    image_html = ''
+    
+    for i in range(len(images)):
+                               
+        image_html += "\n<a href='/browse_images/" + images[i] + "'>" + images[i] + "</a>"
+
+    return image_html
+
+@app.route('/browse_images/<image>')
+def web_view_image(image=None):
+    return "<img src='/browse_images/source/" + image + "'/>"
+
+@app.route('/browse_images/source/<image>')
+def web_image_source(image=None):
+    return send_from_directory('images', image)
+    
 @app.route('/stop_server', methods=['POST'])
 def web_stop_server():
     if request.method == 'POST':
@@ -68,6 +108,22 @@ def web_stop_server():
             return redirect('/')
     else:
         abort(500)
+        
+#Stop caching, see: https://stackoverflow.com/a/34067710
+
+@app.after_request
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    
+    return r
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=True, host='0.0.0.0', port=80, threaded=True)
 
