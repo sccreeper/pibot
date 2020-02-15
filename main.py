@@ -1,12 +1,16 @@
-from flask import Flask, redirect, request, render_template, abort, send_from_directory
+#Server libraries
+from flask import Flask, redirect, request, render_template, abort, send_from_directory, Response
+import socket 
+import io
+#Other 
 import time, random
 import robot
 import RPi.GPIO as GPIO
 import os
-import datetime
+from datetime import datetime
 #Camera libraries
 from picamera import PiCamera
-
+from camera_pi import Camera
         
 motor_A = robot.motor(1,7)
 motor_B = robot.motor(8,25)
@@ -19,9 +23,14 @@ normal_led_two = robot.LED(3)
 #Flask Server
 app = Flask(__name__)
 
+
 def date():
-    print("hi i'm date")
-    return 'you summoned date'
+    d = datetime.now()
+
+    return_date = '{}-{}-{}_{}{}{}'.format(d.day, d.month, d.year, d.hour, d.minute, d.second)
+    
+    
+    return return_date
 
 #Index
 @app.route('/')
@@ -74,8 +83,12 @@ def web_control(component=None):
                 
                 camera.start_preview()
                 time.sleep(5)
-                camera.capture('images/image_{}.jpg'.format(len(os.listdir('images'))+1))
+                
+                pic_date = date()          
+                camera.capture('images/image_{}.jpg'.format(pic_date))
+                
                 camera.stop_preview()
+            return "Took image <a href='/browse_images/image_{}.jpg'>image_{}.jpg</a>".format(pic_date, pic_date)
     else:
         return abort(500)
 @app.route('/browse_images/')
@@ -108,7 +121,22 @@ def web_stop_server():
             return redirect('/')
     else:
         abort(500)
-        
+
+#Video Stream Stuff
+@app.route('/video_feed')
+def video_feed(): 
+   """Video streaming route. Put this in the src attribute of an img tag.""" 
+   return Response(gen(Camera()), 
+                   mimetype='multipart/x-mixed-replace; boundary=frame')
+                   
+#Generation function
+def gen(camera):
+    """Video streaming generator function."""
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
 #Stop caching, see: https://stackoverflow.com/a/34067710
 
 @app.after_request
