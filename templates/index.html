@@ -1,10 +1,19 @@
 <head>
 <title>PiBot</title>
+<!-- Script imports -->
 <script src='/static/scripts/ajax_requests.js'></script>
 <script src='/static/scripts/keyboard_control.js'></script>
-<p id='post_request'></p>
+<!-- Other imports -->
+<link rel='stylesheet' href='/static/style.css'>
 </head>
 
+<div id='head_span'><h1>PiBot</h1></div>
+
+
+
+<div id='main'>
+<p id='post_request'></p>
+	
 <h4>LED Control</h4>
 
 <form method='POST' action='/control/rgb/'>
@@ -41,3 +50,5 @@
 <input type='password' name='PASS'/>
 <input type='submit' value='Enter'/>
 </form>
+
+</div>
