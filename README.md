@@ -1,2 +1,2 @@
 # Robot
-Don't really know what it does at the moment ,this is just the begiining I guess.
+A robot made using the Raspberry Pi computer capable of doing a few things.
