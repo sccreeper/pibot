@@ -12,11 +12,13 @@ from datetime import datetime
 from picamera import PiCamera
 from camera_pi import Camera
         
-motor_A = robot.motor(1,7)
-motor_B = robot.motor(8,25)
+motor_A = robot.motor(1,7, 27)
+motor_B = robot.motor(8,25, 22)
 
 normal_led_one = robot.LED(2)
 normal_led_two = robot.LED(3)
+
+motor_speed = 50
 
 #main_led = robot.RGB_LED([17,27,22])
 
@@ -37,36 +39,50 @@ def date():
 def web_index():
     return render_template('index.html')
 
+
+
 #e
 #Code for controlling components like the motors and the RGB etc.
 @app.route('/control/<component>/', methods=['POST'])
 def web_control(component=None):
+    global motor_speed
+    
     if request.method == 'POST':
         if component == 'rgb':
             main_led.colour(int(request.form['LED_R']), int(request.form['LED_G']), int(request.form['LED_B']))
             return redirect('/')
         elif component == 'motor':
-            if request.form['DIRECTION'] == 'forward':
-                #Backwards beacause I soldered it wrong, you might want to change this for your own code.
-                motor_A.backward()
-                motor_B.forward()
-                return 'Motors going forward'
-            elif request.form['DIRECTION'] == 'backward':
-                motor_A.forward()
-                motor_B.backward()
-                return 'Motors going backward'
-            elif request.form['DIRECTION'] == 'left':
-                motor_A.forward()
-                motor_B.forward()
-                return 'Turning left'
-            elif request.form['DIRECTION'] == 'right':
-                motor_A.backward()
-                motor_B.backward()
-                return 'Turning right'
-            else:
-                motor_A.stop()
-                motor_B.stop()
-                return 'Stopped'
+            try:
+                motor_speed = int(request.form['SPEED'])
+                
+                motor_A.set_speed(motor_speed)
+                motor_B.set_speed(motor_speed)
+                
+                return 'Speed changed to {}%'.format(motor_speed)
+            except KeyError:
+                    
+                
+                if request.form['DIRECTION'] == 'forward':
+                    #Backwards beacause I soldered it wrong, you might want to change this for your own code.
+                    motor_A.backward(motor_speed)
+                    motor_B.forward(motor_speed)
+                    return 'Motors going forward'
+                elif request.form['DIRECTION'] == 'backward':
+                    motor_A.forward(motor_speed)
+                    motor_B.backward(motor_speed)
+                    return 'Motors going backward'
+                elif request.form['DIRECTION'] == 'left':
+                    motor_A.forward(motor_speed)
+                    motor_B.forward(motor_speed)
+                    return 'Turning left'
+                elif request.form['DIRECTION'] == 'right':
+                    motor_A.backward(motor_speed)
+                    motor_B.backward(motor_speed)
+                    return 'Turning right'
+                else:
+                    motor_A.stop()
+                    motor_B.stop()
+                    return 'Stopped'
         elif component == 'headlights':
             if request.form['STATUS'] == 'on':
                 normal_led_one.on()
@@ -134,6 +150,7 @@ def gen(camera):
     """Video streaming generator function."""
     while True:
         frame = camera.get_frame()
+        #print(frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 

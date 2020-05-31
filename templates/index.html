@@ -33,14 +33,23 @@
 <label for='keyboard_enable'>Enable keyboard control (WASD, Space for stop).</label>
 <input type='checkbox' id='keyboard_enable'>
 
+<br>
+
 <button onclick='post_request("/control/motor/", "DIRECTION=forward")'>/\</button>
 <button onclick='post_request("/control/motor/", "DIRECTION=backward")'>\/</button>
 <button onclick='post_request("/control/motor/", "DIRECTION=left")'>&lt;</button>
 <button onclick='post_request("/control/motor/", "DIRECTION=right")'>&gt;</button>
 <button onclick='post_request("/control/motor/", "DIRECTION=stop")'>Stop</button>
 
+<br>
+
+<strong>Motor speed</strong>
+<input type="range" min="1" max="100" value="50" id='motorSpeed' oninput='post_request("/control/motor/", "SPEED=" + this.value)'
+
+<br>
+
 <h4>Video Feed</h4>
-<img src="{{ url_for('video_feed') }}" width='50%' height='25%'>
+<img src="{{ url_for('video_feed') }}" width='360' height='480'>
 <br>
 
 <h4>Camera</h4>

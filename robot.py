@@ -47,41 +47,47 @@ class LED:
 #motor class
 class motor:
     #init function
-    def __init__(self, pin_one, pin_two):
+    def __init__(self, pin_one, pin_two, pwm_pin):
         self.PIN1 = pin_one
         self.PIN2 = pin_two
-        #self.PWM1 = pwm_one
+        self.PWM1 = pwm_pin
 
         GPIO.setup(pin_one, GPIO.OUT)
         GPIO.setup(pin_two, GPIO.OUT)
         
-        #GPIO.setup(pwm_one, GPIO.OUT)
+        GPIO.setup(self.PWM1, GPIO.OUT)
 
         #Setup PWM
-        #self.PWM1_OUT = GPIO.PWM(pin_one, 1000)
+        self.PWM1_OUT = GPIO.PWM(self.PWM1, 1000)
 
         #Start PWM
-        #self.PWM1_OUT.start(25)
+        self.PWM1_OUT.start(25)
     #Make the motor go forward
-    def forward(self):
-        #self.PWM1_OUT.ChangeDutyCycle(speed)
+    def forward(self, speed):
+        self.PWM1_OUT.ChangeDutyCycle(speed)
         GPIO.output(self.PIN1, GPIO.LOW)
         
         GPIO.output(self.PIN2, GPIO.HIGH)
 
     #Make it go backward
-    def backward(self):
-        #self.PWM1_OUT.ChangeDutyCycle(speed)
+    def backward(self, speed):
+        self.PWM1_OUT.ChangeDutyCycle(speed)
         GPIO.output(self.PIN2, GPIO.LOW)
         
         GPIO.output(self.PIN1, GPIO.HIGH)
 
     #Make it stop
     def stop(self):
-        #self.PWM1_OUT.ChangeDutyCycle(0)
+        self.PWM1_OUT.ChangeDutyCycle(0)
         
         GPIO.output(self.PIN1, GPIO.LOW)
         GPIO.output(self.PIN2, GPIO.LOW)
+    
+    #Speed Function
+    def set_speed(self, speed):
+        self.PWM1_OUT.ChangeDutyCycle(speed)    
+        
+        
         
 
         
