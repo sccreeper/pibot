@@ -1,8 +1,8 @@
 #Server libraries
 from flask import Flask, redirect, request, render_template, abort, send_from_directory, Response
-import socket 
+import socket
 import io
-#Other 
+#Other
 import time, random
 import robot
 import RPi.GPIO as GPIO
@@ -11,7 +11,7 @@ from datetime import datetime
 #Camera libraries
 from picamera import PiCamera
 from camera_pi import Camera
-        
+
 motor_A = robot.motor(1,7, 27)
 motor_B = robot.motor(8,25, 22)
 
@@ -30,8 +30,8 @@ def date():
     d = datetime.now()
 
     return_date = '{}-{}-{}_{}{}{}'.format(d.day, d.month, d.year, d.hour, d.minute, d.second)
-    
-    
+
+
     return return_date
 
 #Index
@@ -46,7 +46,9 @@ def web_index():
 @app.route('/control/<component>/', methods=['POST'])
 def web_control(component=None):
     global motor_speed
-    
+
+    #print(request.form)
+
     if request.method == 'POST':
         if component == 'rgb':
             main_led.colour(int(request.form['LED_R']), int(request.form['LED_G']), int(request.form['LED_B']))
@@ -54,55 +56,85 @@ def web_control(component=None):
         elif component == 'motor':
             try:
                 motor_speed = int(request.form['SPEED'])
-                
+
                 motor_A.set_speed(motor_speed)
                 motor_B.set_speed(motor_speed)
-                
+
                 return 'Speed changed to {}%'.format(motor_speed)
             except KeyError:
-                    
-                
-                if request.form['DIRECTION'] == 'forward':
-                    #Backwards beacause I soldered it wrong, you might want to change this for your own code.
-                    motor_A.backward(motor_speed)
-                    motor_B.forward(motor_speed)
-                    return 'Motors going forward'
-                elif request.form['DIRECTION'] == 'backward':
-                    motor_A.forward(motor_speed)
-                    motor_B.backward(motor_speed)
-                    return 'Motors going backward'
-                elif request.form['DIRECTION'] == 'left':
-                    motor_A.forward(motor_speed)
-                    motor_B.forward(motor_speed)
-                    return 'Turning left'
-                elif request.form['DIRECTION'] == 'right':
-                    motor_A.backward(motor_speed)
-                    motor_B.backward(motor_speed)
-                    return 'Turning right'
+                if len(request.form) == 0:
+                    if request.get_json()['DIRECTION'] == 'forward':
+                        motor_A.backward(motor_speed)
+                        motor_B.forward(motor_speed)
+                        return 'Motors going forward'
+                    elif request.get_json()['DIRECTION'] == 'backward':
+                        motor_A.forward(motor_speed)
+                        motor_B.backward(motor_speed)
+                        return 'Motors going backward'
+                    elif request.get_json()['DIRECTION'] == 'left':
+                        motor_A.forward(motor_speed)
+                        motor_B.forward(motor_speed)
+                        return 'Turning left'
+                    elif request.get_json()['DIRECTION'] == 'right':
+                        motor_A.backward(motor_speed)
+                        motor_B.backward(motor_speed)
+                        return 'Turning right'
+                    else:
+                        motor_A.stop()
+                        motor_B.stop()
+                        return 'Stopped'
                 else:
-                    motor_A.stop()
-                    motor_B.stop()
-                    return 'Stopped'
+                    if request.form['DIRECTION'] == 'forward':
+                        #Backwards beacause I soldered it wrong, you might want to change this for your own code.
+                        motor_A.backward(motor_speed)
+                        motor_B.forward(motor_speed)
+                        return 'Motors going forward'
+                    elif request.form['DIRECTION'] == 'backward':
+                        motor_A.forward(motor_speed)
+                        motor_B.backward(motor_speed)
+                        return 'Motors going backward'
+                    elif request.form['DIRECTION'] == 'left':
+                        motor_A.forward(motor_speed)
+                        motor_B.forward(motor_speed)
+                        return 'Turning left'
+                    elif request.form['DIRECTION'] == 'right':
+                        motor_A.backward(motor_speed)
+                        motor_B.backward(motor_speed)
+                        return 'Turning right'
+                    else:
+                        motor_A.stop()
+                        motor_B.stop()
+                        return 'Stopped'
         elif component == 'headlights':
-            if request.form['STATUS'] == 'on':
-                normal_led_one.on()
-                normal_led_two.on()
-                return 'Headlights on'
+            if len(request.form) == 0:
+                if request.get_json()['STATUS'] == 'on':
+                    normal_led_one.on()
+                    normal_led_two.on()
+                    return 'Headlights on'
+                else:
+                    normal_led_one.off()
+                    normal_led_two.off()
+                    return 'Headlights off'
             else:
-                normal_led_one.off()
-                normal_led_two.off()
-                return 'Headlights off'
+                if request.form['STATUS'] == 'on':
+                    normal_led_one.on()
+                    normal_led_two.on()
+                    return 'Headlights on'
+                else:
+                    normal_led_one.off()
+                    normal_led_two.off()
+                    return 'Headlights off'
         elif component == 'camera':
             if request.form['MODE'] == 'picture':
-                
+
                 camera = PiCamera()
-                
+
                 camera.start_preview()
                 time.sleep(5)
-                
-                pic_date = date()          
+
+                pic_date = date()
                 camera.capture('images/image_{}.jpg'.format(pic_date))
-                
+
                 camera.stop_preview()
             return "Took image <a href='/browse_images/image_{}.jpg'>image_{}.jpg</a>".format(pic_date, pic_date)
     else:
@@ -112,9 +144,9 @@ def web_browse():
     images = os.listdir('images')
 
     image_html = ''
-    
+
     for i in range(len(images)):
-                               
+
         image_html += "\n<a href='/browse_images/" + images[i] + "'>" + images[i] + "</a>"
 
     return image_html
@@ -126,7 +158,7 @@ def web_view_image(image=None):
 @app.route('/browse_images/source/<image>')
 def web_image_source(image=None):
     return send_from_directory('images', image)
-    
+
 @app.route('/stop_server', methods=['POST'])
 def web_stop_server():
     if request.method == 'POST':
@@ -140,11 +172,11 @@ def web_stop_server():
 
 #Video Stream Stuff
 @app.route('/video_feed')
-def video_feed(): 
-   """Video streaming route. Put this in the src attribute of an img tag.""" 
-   return Response(gen(Camera()), 
+def video_feed():
+   """Video streaming route. Put this in the src attribute of an img tag."""
+   return Response(gen(Camera()),
                    mimetype='multipart/x-mixed-replace; boundary=frame')
-                   
+
 #Generation function
 def gen(camera):
     """Video streaming generator function."""
@@ -166,9 +198,8 @@ def add_header(r):
     r.headers["Pragma"] = "no-cache"
     r.headers["Expires"] = "0"
     r.headers['Cache-Control'] = 'public, max-age=0'
-    
+
     return r
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=80, threaded=True)
-
