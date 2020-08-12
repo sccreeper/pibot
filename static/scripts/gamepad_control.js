@@ -27,28 +27,28 @@ function gamepadState(gamepadIndex) {
 	var gp = window.navigator.getGamepads()[gamepadIndex]
 	if(gp.buttons[13].pressed) {
 		if(led_state === true) {
-			post_request("/control/headlights/", "STATUS=off");
+			postRequest("/control/headlights/", "STATUS=off");
 			led_state = false;
 		} else {
-			post_request("/control/headlights/", "STATUS=on");
+			postRequest("/control/headlights/", "STATUS=on");
 			led_state = true;
 		}
 	} else if (gp.axes[0] < -0.5) {
-		post_request('/control/motor/', 'DIRECTION=left');
+		postRequest('/control/motor/', 'DIRECTION=left');
 	} else if (gp.axes[0] > 0.5) {
-		post_request('/control/motor/', 'DIRECTION=right');
+		postRequest('/control/motor/', 'DIRECTION=right');
 	} else if (gp.buttons[7].pressed) {
 		console.log(gp.buttons[7].value * 100)
 		
 		document.getElementById('motorSpeed').value = Math.round(gp.buttons[7].value * 100);
-		post_request('/control/motor/', 'DIRECTION=forward')
-		post_request('/control/motor/', 'SPEED=' + Math.round(gp.buttons[7].value * 100));
+		postRequest('/control/motor/', 'DIRECTION=forward')
+		postRequest('/control/motor/', 'SPEED=' + Math.round(gp.buttons[7].value * 100));
 	} else if(gp.buttons[6].pressed) {
 		document.getElementById('motorSpeed').value = Math.round(gp.buttons[6].value * 100);
-		post_request('/control/motor/', 'DIRECTION=backward')
-		post_request('/control/motor/', 'SPEED=' + Math.round(gp.buttons[6].value * 100));
+		postRequest('/control/motor/', 'DIRECTION=backward')
+		postRequest('/control/motor/', 'SPEED=' + Math.round(gp.buttons[6].value * 100));
 		//document.getElementById('motorSpeed').value = 1;
 	} else if((gp.axes[0] < 0.5) && (gp.axes[0] > -0.5))	{
-		post_request('/control/motor/', 'DIRECTION=stop');
+		postRequest('/control/motor/', 'DIRECTION=stop');
 	} 	
 }

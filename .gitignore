@@ -1,5 +1,7 @@
 images/
-__pycache__/
+__pycache__
 robot.pyc
 todo.todo
 camera_pi.pyc
+changelog
+logs/

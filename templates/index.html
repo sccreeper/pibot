@@ -4,9 +4,12 @@
 <script src='/static/scripts/ajax_requests.js'></script>
 <script src='/static/scripts/keyboard_control.js'></script>
 <script src='/static/scripts/gamepad_control.js'></script>
+<script src='/static/scripts/debug.js'></script>
 <!-- Other imports -->
 <link rel='stylesheet' href='/static/style.css'>
 </head>
+
+<body>
 
 <div id='head_span'><h1>PiBot</h1></div>
 
@@ -24,8 +27,8 @@
 <input type='submit' value='Submit'/>
 </form>
 
-<button onclick='post_request("/control/headlights/", "STATUS=on")'>LED ON</button>
-<button onclick='post_request("/control/headlights/", "STATUS=off")'>LED OFF</button>
+<button onclick='postRequest("/control/headlights/", "STATUS=on")'>LED ON</button>
+<button onclick='postRequest("/control/headlights/", "STATUS=off")'>LED OFF</button>
 
 <br>
 
@@ -36,16 +39,16 @@
 
 <br>
 
-<button onclick='post_request("/control/motor/", "DIRECTION=forward")'>/\</button>
-<button onclick='post_request("/control/motor/", "DIRECTION=backward")'>\/</button>
-<button onclick='post_request("/control/motor/", "DIRECTION=left")'>&lt;</button>
-<button onclick='post_request("/control/motor/", "DIRECTION=right")'>&gt;</button>
-<button onclick='post_request("/control/motor/", "DIRECTION=stop")'>Stop</button>
+<button onclick='postRequest("/control/motor/", "DIRECTION=forward")'>/\</button>
+<button onclick='postRequest("/control/motor/", "DIRECTION=backward")'>\/</button>
+<button onclick='postRequest("/control/motor/", "DIRECTION=left")'>&lt;</button>
+<button onclick='postRequest("/control/motor/", "DIRECTION=right")'>&gt;</button>
+<button onclick='postRequest("/control/motor/", "DIRECTION=stop")'>Stop</button>
 
 <br>
 
 <strong>Motor speed</strong>
-<input type="range" min="1" max="100" value="50" id='motorSpeed' oninput='post_request("/control/motor/", "SPEED=" + this.value)'
+<input type="range" min="1" max="100" value="50" id='motorSpeed' oninput='postRequest("/control/motor/", "SPEED=" + this.value)'/>
 
 <br>
 
@@ -54,7 +57,7 @@
 <br>
 
 <h4>Camera</h4>
-<button onclick='post_request("/control/camera/", "MODE=picture")'>Take picture</button>
+<button onclick='postRequest("/control/camera/", "MODE=picture")'>Take picture</button>
 <a href='/browse_images/'>Browse images</a>
 
 <p>Stop the server</p>
@@ -64,3 +67,18 @@
 </form>
 
 </div>
+
+<div id='debug'>
+    <p id='debug.clock.cpu'></p>
+    <p id='debug.clock.gpu'></p>
+    <p id='debug.temp.soc'></p>
+    <p id='debug.ip.host'></p>
+    <p id='debug.ip.client'></p>
+    <p id='debug.upsince'></p>
+    <hr>
+    <div id='debug.log.div'>
+        <pre id='debug.log'></pre>
+    </div>
+</div>
+
+</body>

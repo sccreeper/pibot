@@ -6,8 +6,15 @@ import io
 import time, random
 import robot
 import RPi.GPIO as GPIO
+
 import os
+import subprocess
+
+import json
+
 from datetime import datetime
+
+import atexit
 #Camera libraries
 from picamera import PiCamera
 from camera_pi import Camera
@@ -25,21 +32,46 @@ motor_speed = 50
 #Flask Server
 app = Flask(__name__)
 
+debug_log = ''
 
 def date():
     d = datetime.now()
 
-    return_date = '{}-{}-{}_{}{}{}'.format(d.day, d.month, d.year, d.hour, d.minute, d.second)
+    return_date = '{}-{}-{}_{}:{}:{}'.format(d.day, d.month, d.year, d.hour, d.minute, d.second)
 
 
     return return_date
+
+@app.before_request
+def web_log():
+    global debug_log
+
+    debug_log += '\n[{}]'.format(date()) + ' - web - ' + request.full_path + ' - ' + request.remote_addr 
 
 #Index
 @app.route('/')
 def web_index():
     return render_template('index.html')
 
+#Debug
+@app.route('/debug')
+def web_debug():
+  debugDict = {}
 
+  debugDict['clock'] = {}
+  debugDict['temp'] = {}
+  debugDict['ip'] = {}
+  
+  debugDict['clock']['cpu'] = int(subprocess.check_output(['vcgencmd', 'measure_clock', 'arm']).decode().split('=')[1].replace('\n', '')) / 1000000
+  debugDict['clock']['gpu'] = int(subprocess.check_output(['vcgencmd', 'measure_clock', 'h264']).decode().split('=')[1].replace('\n', '')) / 1000000
+  debugDict['temp']['soc'] = subprocess.check_output(['vcgencmd', 'measure_temp']).decode().split('=')[1].replace('\n', '')
+  debugDict['ip']['host'] = subprocess.check_output(['hostname', '-I']).decode()
+  debugDict['ip']['client'] = request.remote_addr
+  debugDict['upsince'] = subprocess.check_output(['uptime', '-s']).decode()
+  debugDict['log'] = debug_log    
+
+  #print(str(json.dumps(debugDict)))
+  return str(json.dumps(debugDict))
 
 #e
 #Code for controlling components like the motors and the RGB etc.
@@ -66,7 +98,7 @@ def web_control(component=None):
                     if request.get_json()['DIRECTION'] == 'forward':
                         motor_A.backward(motor_speed)
                         motor_B.forward(motor_speed)
-                        return 'Motors going forward'
+                        return 'Motors going forward' 
                     elif request.get_json()['DIRECTION'] == 'backward':
                         motor_A.forward(motor_speed)
                         motor_B.backward(motor_speed)
@@ -139,6 +171,7 @@ def web_control(component=None):
             return "Took image <a href='/browse_images/image_{}.jpg'>image_{}.jpg</a>".format(pic_date, pic_date)
     else:
         return abort(500)
+
 @app.route('/browse_images/')
 def web_browse():
     images = os.listdir('images')
@@ -203,3 +236,13 @@ def add_header(r):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=80, threaded=True)
+
+#Debug log
+def exit_handler():
+    print(debug_log)
+    debug_file = open('logs/{}.log'.format(date()), 'w')
+    debug_file.write(debug_log)
+    debug_file.close()
+
+atexit.register(exit_handler)
+ 

@@ -1,4 +1,4 @@
-function post_request(url, data) {
+function postRequest(url, data) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -9,6 +9,18 @@ function post_request(url, data) {
   xhttp.open("POST", url, true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.send(data);
+}
+
+function getRequest(url) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText);
+      return this.responseText;
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.send();
 }
 
 
