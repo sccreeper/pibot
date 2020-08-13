@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <!--Load the AJAX API-->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js'></script>
+    <link rel='stylesheet' href="/static/style.css"/>
+  </head>
+
+  <body>
+    <!--Div that will hold the pie chart-->
+    <div class="chart-container" style="position: relative; height:40vh; width:80vw; background-color: rgba(0,0,0,0.5);">
+        <canvas id="debug.chart.clock"></canvas>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    var ctx = document.getElementById('debug.chart.clock').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: ['Start'],
+            datasets: [{
+                label: 'CPU Clock (MHz)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [0]
+            }]
+        },
+
+        // Configuration options go here
+        options: {
+          scales: {
+          yAxes: [{
+              gridLines: {
+                  zeroLineColor: '#ffffff'
+              },
+              ticks: {
+                fontColor: '#ffffff'
+              }
+          }],
+          xAxes: [{
+              gridLines: {
+                  zeroLineColor: '#ffffff'
+              },
+              ticks: {
+                fontColor: '#ffffff'
+              }
+          }]
+        },
+        legend: {
+          labels : {
+          fontColor: '#ffffff'
+        }
+        }
+      }
+    });
+
+    chart.canvas.parentNode.style.height = '512px';
+    chart.canvas.parentNode.style.width = '512px';
+  </script>
+</html>

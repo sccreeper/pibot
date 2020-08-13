@@ -33,6 +33,7 @@ motor_speed = 50
 app = Flask(__name__)
 
 debug_log = ''
+debug_file_path = ''
 
 def date():
     d = datetime.now()
@@ -42,11 +43,26 @@ def date():
 
     return return_date
 
+def date_time():
+    d = datetime.now()
+
+    return_time = '{}:{}:{}'.format(d.hour, d.minute, d.second)
+
+    return return_time
+
+def update_log(data):
+    global debug_log
+
+    debug_log += data + '\n'
+
+    with open(debug_file_path, "a") as debug_file:
+        debug_file.write(data + '\n')
+
 @app.before_request
 def web_log():
     global debug_log
 
-    debug_log += '\n[{}]'.format(date()) + ' - web - ' + request.full_path + ' - ' + request.remote_addr 
+    update_log('[{}]'.format(date()) + ' - web - ' + request.full_path + ' - ' + request.remote_addr)
 
 #Index
 @app.route('/')
@@ -61,14 +77,25 @@ def web_debug():
   debugDict['clock'] = {}
   debugDict['temp'] = {}
   debugDict['ip'] = {}
-  
+
   debugDict['clock']['cpu'] = int(subprocess.check_output(['vcgencmd', 'measure_clock', 'arm']).decode().split('=')[1].replace('\n', '')) / 1000000
   debugDict['clock']['gpu'] = int(subprocess.check_output(['vcgencmd', 'measure_clock', 'h264']).decode().split('=')[1].replace('\n', '')) / 1000000
   debugDict['temp']['soc'] = subprocess.check_output(['vcgencmd', 'measure_temp']).decode().split('=')[1].replace('\n', '')
   debugDict['ip']['host'] = subprocess.check_output(['hostname', '-I']).decode()
   debugDict['ip']['client'] = request.remote_addr
   debugDict['upsince'] = subprocess.check_output(['uptime', '-s']).decode()
-  debugDict['log'] = debug_log    
+  debugDict['log'] = {}
+  debugDict['log']['log'] = debug_log
+  debugDict['log']['size'] = {}
+  debugDict['log']['size']['lines'] = len(debug_log.split('\n'))
+  debugDict['log']['size']['kb'] = len(debug_log) / 1024
+  debugDict['chart'] = {}
+  debugDict['chart']['clock'] = {}
+  debugDict['chart']['clock']['cpu'] = int(subprocess.check_output(['vcgencmd', 'measure_clock', 'arm']).decode().split('=')[1].replace('\n', '')) / 1000000
+  debugDict['chart']['temp'] = {}
+  debugDict['chart']['temp']['soc'] = float(subprocess.check_output(['vcgencmd', 'measure_temp']).decode().split('=')[1].replace('\n', '').replace("'C", ''))
+
+  debugDict['timestamp'] = date_time()
 
   #print(str(json.dumps(debugDict)))
   return str(json.dumps(debugDict))
@@ -98,7 +125,7 @@ def web_control(component=None):
                     if request.get_json()['DIRECTION'] == 'forward':
                         motor_A.backward(motor_speed)
                         motor_B.forward(motor_speed)
-                        return 'Motors going forward' 
+                        return 'Motors going forward'
                     elif request.get_json()['DIRECTION'] == 'backward':
                         motor_A.forward(motor_speed)
                         motor_B.backward(motor_speed)
@@ -210,6 +237,10 @@ def video_feed():
    return Response(gen(Camera()),
                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/test')
+def web_test():
+    return render_template('test_page.html')
+
 #Generation function
 def gen(camera):
     """Video streaming generator function."""
@@ -234,15 +265,12 @@ def add_header(r):
 
     return r
 
+#Debug log
+print(debug_log)
+debug_file_path = 'logs/{}.log'.format(date())
+debug_file = open(debug_file_path, 'w')
+debug_file.write(debug_log)
+debug_file.close()
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=80, threaded=True)
-
-#Debug log
-def exit_handler():
-    print(debug_log)
-    debug_file = open('logs/{}.log'.format(date()), 'w')
-    debug_file.write(debug_log)
-    debug_file.close()
-
-atexit.register(exit_handler)
- 

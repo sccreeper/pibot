@@ -1,84 +1,99 @@
 <head>
-<title>PiBot</title>
+    <title>PiBot</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js'></script>
+</head>
+
+<body>
+
+    <div id='head_span'>
+        <h1>PiBot</h1>
+    </div>
+
+
+
+    <div id='main'>
+        <p id='post_request'></p>
+
+        <h4>LED Control</h4>
+
+        <form method='POST' action='/control/rgb/'>
+            <input type='text' name='LED_R' placeholder='R' />
+            <input type='text' name='LED_G' placeholder='G' />
+            <input type='text' name='LED_B' placeholder='B' />
+            <input type='submit' value='Submit' />
+        </form>
+
+        <button onclick='postRequest("/control/headlights/", "STATUS=on")'>LED ON</button>
+        <button onclick='postRequest("/control/headlights/", "STATUS=off")'>LED OFF</button>
+
+        <br>
+
+        <h4>Direction control</h4>
+
+        <label for='keyboard_enable'>Enable keyboard control (WASD, Space for stop).</label>
+        <input type='checkbox' id='keyboard_enable'>
+
+        <br>
+
+        <button onclick='postRequest("/control/motor/", "DIRECTION=forward")'>/\</button>
+        <button onclick='postRequest("/control/motor/", "DIRECTION=backward")'>\/</button>
+        <button onclick='postRequest("/control/motor/", "DIRECTION=left")'>&lt;</button>
+        <button onclick='postRequest("/control/motor/", "DIRECTION=right")'>&gt;</button>
+        <button onclick='postRequest("/control/motor/", "DIRECTION=stop")'>Stop</button>
+
+        <br>
+
+        <strong>Motor speed</strong>
+        <input type="range" min="1" max="100" value="50" id='motorSpeed'
+            oninput='postRequest("/control/motor/", "SPEED=" + this.value)' />
+
+        <br>
+
+        <h4>Video Feed</h4>
+        <img src="{{ url_for('video_feed') }}" width='360' height='480'>
+        <br>
+
+        <h4>Camera</h4>
+        <button onclick='postRequest("/control/camera/", "MODE=picture")'>Take picture</button>
+        <a href='/browse_images/'>Browse images</a>
+
+        <p>Stop the server</p>
+        <form method='POST' action='/stop_server'>
+            <input type='password' name='PASS' />
+            <input type='submit' value='Enter' />
+        </form>
+
+    </div>
+
+    <div id='debug'>
+        <p id='debug.clock.cpu'></p>
+        <p id='debug.clock.gpu'></p>
+        <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+            <canvas id="debug.chart.clock"></canvas>
+        </div>
+        <p id='debug.temp.soc'></p>
+        <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+            <canvas id="debug.chart.temp"></canvas>
+        </div>
+        <p id='debug.ip.host'></p>
+        <p id='debug.ip.client'></p>
+        <p id='debug.upsince'></p>
+        <p id='debug.log.size.lines'></p>
+        <p id='debug.log.size.kb'></p>
+        <hr>
+        <div id='debug.log.div'>
+          <pre id='debug.log.log'></pre>
+        </div>
+    </div>
+
+</body>
+
 <!-- Script imports -->
 <script src='/static/scripts/ajax_requests.js'></script>
 <script src='/static/scripts/keyboard_control.js'></script>
 <script src='/static/scripts/gamepad_control.js'></script>
 <script src='/static/scripts/debug.js'></script>
+
+
 <!-- Other imports -->
 <link rel='stylesheet' href='/static/style.css'>
-</head>
-
-<body>
-
-<div id='head_span'><h1>PiBot</h1></div>
-
-
-
-<div id='main'>
-<p id='post_request'></p>
-	
-<h4>LED Control</h4>
-
-<form method='POST' action='/control/rgb/'>
-<input type='text' name='LED_R' placeholder='R'/>
-<input type='text' name='LED_G' placeholder='G'/>
-<input type='text' name='LED_B' placeholder='B'/>
-<input type='submit' value='Submit'/>
-</form>
-
-<button onclick='postRequest("/control/headlights/", "STATUS=on")'>LED ON</button>
-<button onclick='postRequest("/control/headlights/", "STATUS=off")'>LED OFF</button>
-
-<br>
-
-<h4>Direction control</h4>
-
-<label for='keyboard_enable'>Enable keyboard control (WASD, Space for stop).</label>
-<input type='checkbox' id='keyboard_enable'>
-
-<br>
-
-<button onclick='postRequest("/control/motor/", "DIRECTION=forward")'>/\</button>
-<button onclick='postRequest("/control/motor/", "DIRECTION=backward")'>\/</button>
-<button onclick='postRequest("/control/motor/", "DIRECTION=left")'>&lt;</button>
-<button onclick='postRequest("/control/motor/", "DIRECTION=right")'>&gt;</button>
-<button onclick='postRequest("/control/motor/", "DIRECTION=stop")'>Stop</button>
-
-<br>
-
-<strong>Motor speed</strong>
-<input type="range" min="1" max="100" value="50" id='motorSpeed' oninput='postRequest("/control/motor/", "SPEED=" + this.value)'/>
-
-<br>
-
-<h4>Video Feed</h4>
-<img src="{{ url_for('video_feed') }}" width='360' height='480'>
-<br>
-
-<h4>Camera</h4>
-<button onclick='postRequest("/control/camera/", "MODE=picture")'>Take picture</button>
-<a href='/browse_images/'>Browse images</a>
-
-<p>Stop the server</p>
-<form method='POST' action='/stop_server'>
-<input type='password' name='PASS'/>
-<input type='submit' value='Enter'/>
-</form>
-
-</div>
-
-<div id='debug'>
-    <p id='debug.clock.cpu'></p>
-    <p id='debug.clock.gpu'></p>
-    <p id='debug.temp.soc'></p>
-    <p id='debug.ip.host'></p>
-    <p id='debug.ip.client'></p>
-    <p id='debug.upsince'></p>
-    <hr>
-    <div id='debug.log.div'>
-        <pre id='debug.log'></pre>
-    </div>
-</div>
-
-</body>
