@@ -29,9 +29,9 @@ class RGB_LED:
     def colour(self, red, green, blue):
         self.RED_OUT.ChangeDutyCycle((red/255)*100)
         self.GREEN_OUT.ChangeDutyCycle((green/255)*100)
-        self.BLUE_OUT.ChangeDutyCycle((blue/255)*100)  
+        self.BLUE_OUT.ChangeDutyCycle((blue/255)*100)
 
-#Functioon for a normal non RGB LED
+#Function for a normal non RGB LED
 class LED:
     #init function
     def __init__(self, pin):
@@ -54,7 +54,7 @@ class motor:
 
         GPIO.setup(pin_one, GPIO.OUT)
         GPIO.setup(pin_two, GPIO.OUT)
-        
+
         GPIO.setup(self.PWM1, GPIO.OUT)
 
         #Setup PWM
@@ -66,29 +66,23 @@ class motor:
     def forward(self, speed):
         self.PWM1_OUT.ChangeDutyCycle(speed)
         GPIO.output(self.PIN1, GPIO.LOW)
-        
+
         GPIO.output(self.PIN2, GPIO.HIGH)
 
     #Make it go backward
     def backward(self, speed):
         self.PWM1_OUT.ChangeDutyCycle(speed)
         GPIO.output(self.PIN2, GPIO.LOW)
-        
+
         GPIO.output(self.PIN1, GPIO.HIGH)
 
     #Make it stop
     def stop(self):
         self.PWM1_OUT.ChangeDutyCycle(0)
-        
+
         GPIO.output(self.PIN1, GPIO.LOW)
         GPIO.output(self.PIN2, GPIO.LOW)
-    
+
     #Speed Function
     def set_speed(self, speed):
-        self.PWM1_OUT.ChangeDutyCycle(speed)    
-        
-        
-        
-
-        
-    
+        self.PWM1_OUT.ChangeDutyCycle(speed)

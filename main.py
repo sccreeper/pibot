@@ -14,7 +14,7 @@ import json
 
 from datetime import datetime
 
-import atexit
+#import atexit
 #Camera libraries
 from picamera import PiCamera
 from camera_pi import Camera
@@ -34,6 +34,12 @@ app = Flask(__name__)
 
 debug_log = ''
 debug_file_path = ''
+previous_entry = ''
+previous_entry_amount = 0
+
+#Configurable GPIO pins
+config_gpio = [2,3,4,17,27,22,10,9,11,0,5,6,13,19,26,14,15,18,23,24,25,8,7,1,12,16,20,21]
+GPIO.setmode(GPIO.BCM)
 
 def date():
     d = datetime.now()
@@ -50,19 +56,33 @@ def date_time():
 
     return return_time
 
-def update_log(data):
-    global debug_log
+def update_log(data, type):
+    global debug_log, previous_entry, previous_entry_amount
 
-    debug_log += data + '\n'
+    debug_log += '[{}]'.format(date()) + ' - {} - {} \n'.format(type,data)
 
-    with open(debug_file_path, "a") as debug_file:
-        debug_file.write(data + '\n')
+    if ' - {} - {} \n'.format(type,data) == previous_entry:
+        lines = open(debug_file_path).read().splitlines()
+        lines[len(lines)-1] = '[{}][{}]'.format(date(),previous_entry_amount) + ' - {} - {} \n'.format(type,data)
+
+        lines2 = open(debug_file_path, 'w')
+        lines2.write("\n".join(lines))
+
+        lines2.close()
+        #lines.close()
+
+        previous_entry_amount += 1
+    else:
+        with open(debug_file_path, "a") as debug_file:
+            debug_file.write('[{}]'.format(date()) + ' - {} - {} \n'.format(type,data))
+        previous_entry = ' - {} - {} \n'.format(type,data)
+        previous_entry_amount = 0
 
 @app.before_request
 def web_log():
     global debug_log
 
-    update_log('[{}]'.format(date()) + ' - web - ' + request.full_path + ' - ' + request.remote_addr)
+    update_log(request.full_path + ' - ' + request.remote_addr, 'web')
 
 #Index
 @app.route('/')
@@ -85,20 +105,41 @@ def web_debug():
   debugDict['ip']['client'] = request.remote_addr
   debugDict['upsince'] = subprocess.check_output(['uptime', '-s']).decode()
   debugDict['log'] = {}
-  debugDict['log']['log'] = debug_log
+  debugDict['log']['log'] = "\n".join(debug_log.split('\n')[-32:])
   debugDict['log']['size'] = {}
   debugDict['log']['size']['lines'] = len(debug_log.split('\n'))
-  debugDict['log']['size']['kb'] = len(debug_log) / 1024
+  debugDict['log']['size']['kb'] = os.path.getsize(debug_file_path) / 1024
   debugDict['chart'] = {}
   debugDict['chart']['clock'] = {}
   debugDict['chart']['clock']['cpu'] = int(subprocess.check_output(['vcgencmd', 'measure_clock', 'arm']).decode().split('=')[1].replace('\n', '')) / 1000000
   debugDict['chart']['temp'] = {}
   debugDict['chart']['temp']['soc'] = float(subprocess.check_output(['vcgencmd', 'measure_temp']).decode().split('=')[1].replace('\n', '').replace("'C", ''))
 
+  debugDict['pinouts'] = {}
+  debugDict['pinouts']['left'] = []
+  debugDict['pinouts']['right'] = []
+  #Get pinoutss
+  for i in range(20):
+      try:
+          debugDict['pinouts']['left'].append(GPIO.input(i))
+      except RuntimeError:
+         debugDict['pinouts']['left'].append(None)
+
+  for i in range(20,40):
+      try:
+          debugDict['pinouts']['right'].append(GPIO.input(i))
+      except RuntimeError:
+         debugDict['pinouts']['right'].append(None)
+
+
   debugDict['timestamp'] = date_time()
 
   #print(str(json.dumps(debugDict)))
   return str(json.dumps(debugDict))
+
+@app.route('/log')
+def web_log_plain():
+    return '<pre>{}</pre>'.format(debug_log)
 
 #e
 #Code for controlling components like the motors and the RGB etc.
