@@ -1,5 +1,5 @@
 #See https://blog.ronnyvdb.net/2019/01/20/howto-stream-html5-video-h264-encoded-video-encapsulated-in-mp4-from-the-raspberry-pi-to-any-web-browser/
-#This doesn't work. I'm just leaving it in here in hope it gets fixed.
+#This doesn't work. I'm just leaving it in here in hope it gets fixed. Some problem with the GST idk what though.
 
 import subprocess # for piping
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -24,7 +24,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         print("starting polling loop.")
         while(p.poll() is None):
-            print ("looping... ") 
+            print ("looping... ")
             stdoutdata = p.stdout.read(DataChunkSize)
             self.wfile.write(stdoutdata)
 
