@@ -229,13 +229,17 @@ def web_control(component=None):
 
                 camera = PiCamera()
 
+                camera.hflip = True
+                camera.vflip = True
+
                 camera.start_preview()
-                time.sleep(5)
+                time.sleep(1.5)
 
                 pic_date = date()
                 camera.capture('images/image_{}.jpg'.format(pic_date))
 
                 camera.stop_preview()
+                camera.close()
             return "Took image <a href='/browse_images/image_{}.jpg'>image_{}.jpg</a>".format(pic_date, pic_date)
     else:
         return abort(500)

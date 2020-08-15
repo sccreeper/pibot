@@ -44,17 +44,19 @@
         <br>
 
         <strong>Motor speed</strong>
-        <input type="range" min="1" max="100" value="50" id='motorSpeed'
-            oninput='postRequest("/control/motor/", "SPEED=" + this.value)' />
+        <input type="range" min="1" max="100" value="50" id='motorSpeed' oninput='postRequest("/control/motor/", "SPEED=" + this.value)' />
 
         <br>
 
         <h4>Video Feed</h4>
-        <img src="{{ url_for('video_feed') }}" width='360' height='480'>
+        <div id='videofeed.container'>
+            <img src="{{ url_for('video_feed') }}" width='360' height='480'>
+        </div>
         <br>
 
+
         <h4>Camera</h4>
-        <button onclick='postRequest("/control/camera/", "MODE=picture")'>Take picture</button>
+        <button onclick='takePicture()'>Take picture</button>
         <a href='/browse_images/'>Browse images</a>
 
         <p>Stop the server</p>
@@ -88,7 +90,7 @@
         <strong><a href='/log'>View entire log</a></strong>
         <br>
         <div id='debug.log.div'>
-          <pre id='debug.log.log'></pre>
+            <pre id='debug.log.log'></pre>
         </div>
     </div>
 
@@ -99,6 +101,7 @@
 <script src='/static/scripts/keyboard_control.js'></script>
 <script src='/static/scripts/gamepad_control.js'></script>
 <script src='/static/scripts/debug.js'></script>
+<script src='/static/scripts/photo.js'></script>
 
 
 <!-- Other imports -->
