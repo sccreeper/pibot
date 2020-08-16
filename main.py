@@ -155,12 +155,21 @@ def web_control(component=None):
             return redirect('/')
         elif component == 'motor':
             try:
-                motor_speed = int(request.form['SPEED'])
+                if len(request.form) == 0:
+                    motor_speed = int(request.get_json()['SPEED'])
 
-                motor_A.set_speed(motor_speed)
-                motor_B.set_speed(motor_speed)
+                    motor_A.set_speed(motor_speed)
+                    motor_B.set_speed(motor_speed)
 
-                return 'Speed changed to {}%'.format(motor_speed)
+                    return 'Speed changed to {}%'.format(motor_speed)
+
+                else:
+                    motor_speed = int(request.form['SPEED'])
+
+                    motor_A.set_speed(motor_speed)
+                    motor_B.set_speed(motor_speed)
+
+                    return 'Speed changed to {}%'.format(motor_speed)
             except KeyError:
                 if len(request.form) == 0:
                     if request.get_json()['DIRECTION'] == 'forward':
