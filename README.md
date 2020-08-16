@@ -15,7 +15,7 @@
 
  - Voice control
  - Fully configurable
- - Mobile App (Android, I don't have a mac sorry Apple)
+ - [Mobile App](https://github.com/sccreeper/PiBotAppAndroid) (Android, I don't have a mac sorry Apple)
  - Extending current control features to implement a API
 
 For a full list of planned features visit [this](https://trello.com/b/UPKINKLV/robot) Trello board.
