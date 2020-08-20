@@ -10,7 +10,7 @@ body {
 button, input[type=submit] {
 	background-color: #00bfff;
 	padding: 5px;
-	padding-left:7px; 
+	padding-left:7px;
 	padding-right: 7px;
 	border: solid 1px #00ace6;
 	border-radius: 3px;
@@ -44,12 +44,12 @@ input[type=text], input[type=password] {
 	border-radius: 4px;
 	background-color: #f8f8f8;
 
-	-webkit-transition: 0.5s;
-	transition: 0.5s;
+	-webkit-transition: 0.25s;
+	transition: 0.25s;
 }
 
 textarea:focus, input[type=text]:focus, input[type=url]:focus, input[type=password]:focus {
-	border: 2px solid #0000ff;
+	border: 2px solid #00bfff;
 	outline: none;
 }
 
@@ -60,8 +60,8 @@ input[type=range] {
   background: #d3d3d3;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  -webkit-transition: .25s;
+  transition: opacity .25s;
 
 }
 
@@ -100,12 +100,12 @@ input[type=range] ::-moz-range-thumb {
 }
 
 #debug.log.div {
-	margin:4px, 4px; 
-	padding:4px; 
-	background-color: rgba(0,0,0,0.1); 
-	width: 500px; 
-	height: 110px; 
-	overflow-x: hidden; 
-	overflow-y: auto; 
-	text-align:justify; 
+	margin:4px, 4px;
+	padding:4px;
+	background-color: rgba(0,0,0,0.1);
+	width: 500px;
+	height: 110px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	text-align:justify;
 }

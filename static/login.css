@@ -1,0 +1,38 @@
+#centered {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+input[type=password] {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+
+    padding: 13px;
+    font-size: 150%;
+
+    -webkit-transition: 0.25s;
+    transition: 0.25s;
+}
+
+input[type=submit] {
+    background-color: #00bfff;
+    padding: 10px;
+    padding-left:14px;
+    padding-right: 14px;
+    border: solid 1px #00ace6;
+    border-radius: 3px;
+    color: white;
+    outline: none;
+    margin: 0px;
+    margin-top: 15px;
+    font-size: 125%;
+}
+
+#error-message {
+    color: red;
+}

@@ -1,0 +1,27 @@
+<head>
+    <title>PiBot</title>
+    <link rel="icon" href="/static/icons/pibot-icon.ico" type="image/x-icon" />
+    <!-- Other imports -->
+    <link rel='stylesheet' href='/static/style.css'>
+    <link rel='stylesheet' href='/static/login.css'>
+</head>
+
+<body>
+
+    <div id='head_span'>
+        <h1>PiBot</h1>
+    </div>
+
+    <div id='main'>
+        <div id='centered'>
+            <h1>Login</h1>
+            <strong id='error-message'>{{message}}</strong>
+            <form method='post' action='/login'>
+                <input type='password' name='pass' placeholder='Password' />
+                <br>
+                <input id='submit-button' type='submit' value='Send' />
+            </form>
+        </div>
+    </div>
+
+</body>
