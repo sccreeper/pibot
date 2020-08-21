@@ -1,13 +1,25 @@
 <head>
     <title>PiBot</title>
-    <link rel="icon" href="/static/icons/pibot-icon.ico" type="image/x-icon"/>
+    <link rel="icon" href="/static/icons/pibot-icon.ico" type="image/x-icon" />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js'></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Other imports -->
+    <link rel='stylesheet' href='/static/style.css'>
 </head>
 
 <body>
 
     <div id='head_span'>
-        <h1>PiBot</h1>
+
+        <div id='menu'>
+            <ul>
+                <li>
+                    <h1>PiBot</h1>
+                </li>
+                <li style='float:right; margin-right: 25px; margin-top: 25px;'><a href='/settings'><i class="material-icons md-36 md-light" title='Settings'>settings</i></a><a href='/logout'><i class="material-icons md-36 md-light" title='Logout' style='margin-left: 8px;'>login</i></a></li>
+            </ul>
+        </div>
+
     </div>
 
 
@@ -103,7 +115,3 @@
 <script src='/static/scripts/gamepad_control.js'></script>
 <script src='/static/scripts/debug.js'></script>
 <script src='/static/scripts/photo.js'></script>
-
-
-<!-- Other imports -->
-<link rel='stylesheet' href='/static/style.css'>

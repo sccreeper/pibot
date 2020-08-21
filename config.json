@@ -1,3 +1,1 @@
-{
-    "pass" : "supersecretpassword"
-}
+{"pass": "1234", "port": "5000"}

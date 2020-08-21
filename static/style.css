@@ -1,111 +1,137 @@
 body {
-	background-color: #f2f2f2;
-	font-family: Arial, Helvetica, sans-serif;
-	margin: 0;
-	padding:0;
+    background-color: #f2f2f2;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
     /* overflow:hidden;
     height:100%; */
 }
 
 button, input[type=submit] {
-	background-color: #00bfff;
-	padding: 5px;
-	padding-left:7px;
-	padding-right: 7px;
-	border: solid 1px #00ace6;
-	border-radius: 3px;
-	color: white;
-	outline: none;
-	margin: 0px;
-
+    background-color: #00bfff;
+    padding: 5px;
+    padding-left: 7px;
+    padding-right: 7px;
+    border: solid 1px #00ace6;
+    border-radius: 3px;
+    color: white;
+    outline: none;
+    margin: 0px;
 }
 
 #head_span h1 {
-
-	color: white;
+    color: white;
 }
 
 #head_span {
-	background-color:  #00aaff;
-	width: 100%;
-	padding: 10px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	box-shadow: 0px 5px 5px grey;
+    background-color: #00aaff;
+    width: 100%;
+    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    box-shadow: 0px 5px 5px grey;
 }
 
 #main {
-	 margin-left: 5px;
-	 position: static;
+    margin-left: 5px;
+    position: static;
 }
 
 input[type=text], input[type=password] {
-	border: 2px solid #ccc;
-	border-radius: 4px;
-	background-color: #f8f8f8;
-
-	-webkit-transition: 0.25s;
-	transition: 0.25s;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    -webkit-transition: 0.25s;
+    transition: 0.25s;
 }
 
 textarea:focus, input[type=text]:focus, input[type=url]:focus, input[type=password]:focus {
-	border: 2px solid #00bfff;
-	outline: none;
+    border: 2px solid #00bfff;
+    outline: none;
 }
 
 input[type=range] {
-  -webkit-appearance: none;
-  height: 10px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .25s;
-  transition: opacity .25s;
-
+    -webkit-appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .25s;
+    transition: opacity .25s;
 }
 
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 6px;
-  background: #00bfff;
-  cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    background: #00bfff;
+    cursor: pointer;
 }
 
 input[type=range] ::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border-radius: 6px;
-  background: #00bfff;
-  cursor: pointer;
+    width: 12px;
+    height: 12px;
+    border-radius: 6px;
+    background: #00bfff;
+    cursor: pointer;
+}
+
+i[type=icon] {
+	color: white;
+	font-size: 125%;
+}
+
+.material-icons.md-light { color: rgb(255, 255, 255); }
+.material-icons.md-36 { font-size: 36px; }
+
+#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#menu li {
+  float: left;
+}
+
+.action {
+    border-radius: 16px;
 }
 
 /* Debug Screen */
 #debug {
-	display: none; /* Hidden by default */
-	position: fixed; /* Stay in place */
-	z-index: 1; /* Sit on top */
-	left: 0;
-	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-	overflow: auto; /* Enable scroll if needed */
-	background-color: rgb(0,0,0); /* Fallback color */
-	background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-
-	color: white;
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black w/ opacity */
+    color: white;
 }
 
 #debug.log.div {
-	margin:4px, 4px;
-	padding:4px;
-	background-color: rgba(0,0,0,0.1);
-	width: 500px;
-	height: 110px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	text-align:justify;
+    margin: 4px, 4px;
+    padding: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 500px;
+    height: 110px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: justify;
 }

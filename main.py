@@ -1,3 +1,21 @@
+# Copyright (c) 2020 <Oscar Peace>
+#
+# GNU GENERAL PUBLIC LICENSE
+#    Version 3, 29 June 2007
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # Server libraries
 from flask import Flask, redirect, request, render_template, abort, send_from_directory, Response, make_response
 import socket
@@ -67,6 +85,10 @@ def read_file(path):
     with open(path, 'r') as file:
         return file.read()
 
+def write_file(path, data):
+    with open(path, 'w') as file:
+        return file.write(data)
+
 
 def update_log(data, type):
     global debug_log, previous_entry, previous_entry_amount
@@ -97,14 +119,17 @@ def update_log(data, type):
 def web_log():
     global debug_log
 
-    update_log(request.full_path + ' - ' + request.remote_addr, 'web')
+    if 'android' in request.headers.get('User-Agent').lower():
+        update_log(request.full_path + ' - ' + request.remote_addr, 'app')
+    else:
+        update_log(request.full_path + ' - ' + request.remote_addr, 'web')
 
 # Index
 @app.route('/')
 def web_index():
     logged_in = request.cookies.get('logged_in')
 
-    if logged_in == None:
+    if logged_in == None or logged_in == '0':
         return render_template('login.html')
     else:
         return render_template('index.html')
@@ -122,8 +147,6 @@ def web_login():
         return render_template('login.html', message='Incorrect password')
 
 # Debug
-
-
 @app.route('/debug')
 def web_debug():
     debugDict = {}
@@ -324,7 +347,7 @@ def web_image_source(image=None):
 @app.route('/stop_server', methods=['POST'])
 def web_stop_server():
     if request.method == 'POST':
-        if request.form['PASS'] == 'topSecretPassword':
+        if request.form['PASS'] == config['pass']:
             GPIO.cleanup()
             exit()
         else:
@@ -345,6 +368,37 @@ def video_feed():
 @app.route('/test')
 def web_test():
     return render_template('test_page.html')
+
+#Settings
+@app.route('/settings')
+def web_settings():
+        logged_in = request.cookies.get('logged_in')
+
+        if logged_in == None or logged_in == '0':
+            return redirect('/')
+        else:
+            return render_template('settings.html', password=config['pass'], port=config['port'])
+
+@app.route('/settings_update', methods=['POST'])
+def web_settings_update():
+    global config
+
+    new_config = {}
+
+    new_config['pass'] = request.form['pass']
+    new_config['port'] = request.form['port']
+
+    write_file('config.json', json.dumps(new_config))
+    config = new_config
+
+    return redirect('/settings')
+
+@app.route('/logout')
+def web_logout():
+    resp = make_response(render_template('login.html', message='Logged out successfully.'))
+    resp.set_cookie('logged_in', '1')
+
+    return resp
 
 # Generation function
 
@@ -385,4 +439,5 @@ debug_file.close()
 config = json.loads(read_file('config.json'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=80, threaded=True)
+    update_log('Server starting!', 'info')
+    app.run(debug=True, host='0.0.0.0', port=config['port'], threaded=True)

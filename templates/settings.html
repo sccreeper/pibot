@@ -1,0 +1,31 @@
+<head>
+    <title>PiBot</title>
+    <link rel="icon" href="/static/icons/pibot-icon.ico" type="image/x-icon" />
+    <!-- Other imports -->
+    <link rel='stylesheet' href='/static/style.css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src='/static/scripts/settings.js'></script>
+</head>
+
+<body>
+
+    <div id='head_span'>
+        <h1>PiBot</h1>
+    </div>
+
+    <div id='main'>
+        <h3>Settings</h3>
+        <form action='/settings_update' method='post'>
+            <p>Password</p>
+            <input type='password' name='pass' id='pass' value={{password}} />
+            <input type="checkbox" onclick="showPassword()">Show Password
+
+            <br>
+            <p>Port</p>
+            <input type='text' name='port' value={{port}} title='Server restart required for port change to take effect'/>
+            <br>
+            <button onclick='this.parentElement.submit()' style='margin-top: 8px;'><i class="material-icons">save</i></button>
+        </form>
+    </div>
+
+</body>
