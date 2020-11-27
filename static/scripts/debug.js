@@ -136,6 +136,7 @@ function updateDebugValues() {
             document.getElementById('debug.temp.soc').innerHTML = "<strong>SOC Temp:</strong> " + debugData.temp.soc;
             document.getElementById('debug.ip.host').innerHTML = "<strong>Host IP:</strong> " + debugData.ip.host;
             document.getElementById('debug.ip.client').innerHTML = "<strong>Client IP:</strong> " + debugData.ip.client;
+            document.getElementById('debug.ip.ssid').innerHTML = "<strong>Connection:</strong>" + debugData.ip.ssid;
             document.getElementById('debug.upsince').innerHTML = "<strong>Up since:</strong> " + debugData.upsince;
             document.getElementById('debug.log.log').innerHTML = debugData.log.log;
             document.getElementById('debug.log.size.lines').innerHTML = "<strong>Log file size (lines):</strong> " + debugData.log.size.lines;

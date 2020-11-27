@@ -16,7 +16,12 @@
                 <li>
                     <h1>PiBot</h1>
                 </li>
-                <li style='float:right; margin-right: 25px; margin-top: 25px;'><a href='/settings'><i class="material-icons md-36 md-light" title='Settings'>settings</i></a><a href='/logout'><i class="material-icons md-36 md-light" title='Logout' style='margin-left: 8px;'>login</i></a></li>
+                <li style='float:right; margin-right: 25px; margin-top: 25px;'>
+                    <a href='/about'><i class="material-icons md-36 md-light" title='About' style='margin-left: 8px;'>info</i></a>
+                    <a href='/'><i class="material-icons md-36 md-light" title='Control' style='margin-left: 8px;'>gamepad</i></a>
+                    <a href='/logout'><i class="material-icons md-36 md-light" title='Logout' style='margin-left: 8px;'>login</i></a>
+                    <a href='/settings'><i class="material-icons md-36 md-light" title='Settings' style='margin-left: 8px;'>settings</i></a>
+                </li>
             </ul>
         </div>
 
@@ -92,6 +97,7 @@
         </div>
         <p id='debug.ip.host'></p>
         <p id='debug.ip.client'></p>
+        <p id='debug.ip.ssid'></p>
         <p id='debug.upsince'></p>
 
         <canvas id='debug.gpio' width="48px" height="480px"></canvas>

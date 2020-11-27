@@ -23,6 +23,7 @@ import io
 # Other
 import time
 import random
+import uuid
 import robot
 import RPi.GPIO as GPIO
 
@@ -55,6 +56,8 @@ debug_log = ''
 debug_file_path = ''
 previous_entry = ''
 previous_entry_amount = 0
+
+login_tokens = []
 
 # Configurable GPIO pins
 config_gpio = [2, 3, 4, 17, 27, 22, 10, 9, 11, 0, 5, 6, 13,
@@ -114,7 +117,16 @@ def update_log(data, type):
         previous_entry = ' - {} - {} \n'.format(type, data)
         previous_entry_amount = 0
 
+def logged_in(request):
+    global login_tokens
 
+    if request.cookies.get('t') == None:
+        return False
+
+    if request.cookies.get('t') in login_tokens:
+        return True
+    else:
+        return False
 @app.before_request
 def web_log():
     global debug_log
@@ -127,24 +139,36 @@ def web_log():
 # Index
 @app.route('/')
 def web_index():
-    logged_in = request.cookies.get('logged_in')
-
-    if logged_in == None or logged_in == '0':
-        return render_template('login.html')
-    else:
+    if logged_in(request):
         return render_template('index.html')
-
+    else:
+        return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def web_login():
+    global login_tokens
 
     if request.form['pass'] == config['pass']:
+        #Generate ID
+
+        while True:
+            token = uuid.uuid4()
+
+            if token in login_tokens:
+                continue
+            else:
+                break
+
         resp = make_response(redirect('/'))
-        resp.set_cookie('logged_in', '1')
+        resp.set_cookie('t', str(token))
+
+        login_tokens.append(str(token))
 
         return resp
     else:
         return render_template('login.html', message='Incorrect password')
+
+
 
 # Debug
 @app.route('/debug')
@@ -164,6 +188,8 @@ def web_debug():
     debugDict['ip']['host'] = subprocess.check_output(
         ['hostname', '-I']).decode()
     debugDict['ip']['client'] = request.remote_addr
+    debugDict['ip']['ssid'] = subprocess.check_output(['iwgetid']).decode()
+
     debugDict['upsince'] = subprocess.check_output(['uptime', '-s']).decode()
     debugDict['log'] = {}
     debugDict['log']['log'] = "\n".join(debug_log.split('\n')[-32:])
@@ -372,12 +398,11 @@ def web_test():
 #Settings
 @app.route('/settings')
 def web_settings():
-        logged_in = request.cookies.get('logged_in')
 
-        if logged_in == None or logged_in == '0':
-            return redirect('/')
-        else:
+        if logged_in(request):
             return render_template('settings.html', password=config['pass'], port=config['port'])
+        else:
+            return redirect('/')
 
 @app.route('/settings_update', methods=['POST'])
 def web_settings_update():
@@ -388,17 +413,29 @@ def web_settings_update():
     new_config['pass'] = request.form['pass']
     new_config['port'] = request.form['port']
 
-    write_file('config.json', json.dumps(new_config))
+    write_file('config.json', json.dumps(new_config, indent=4, sort_keys=True))
     config = new_config
 
     return redirect('/settings')
 
 @app.route('/logout')
 def web_logout():
+    global login_tokens
+
+    login_tokens.remove(request.cookies.get('t'))
+
     resp = make_response(render_template('login.html', message='Logged out successfully.'))
-    resp.set_cookie('logged_in', '1')
+    resp.set_cookie('token', '')
 
     return resp
+
+@app.route('/about')
+def web_about():
+    return render_template('about.html')
+
+@app.route('/about/license')
+def web_about_license():
+    return "<pre>" + read_file('LICENSE') + "</pre>"
 
 # Generation function
 

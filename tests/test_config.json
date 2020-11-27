@@ -1,0 +1,7 @@
+{
+    [
+        "mod_name" : {
+            "components": [{"component_type" : "LED", "data":{"pin": 42}}]
+        }
+    ]
+}

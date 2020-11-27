@@ -27,20 +27,14 @@
 
     </div>
 
-
     <div id='main'>
-        <h3>Settings</h3>
-        <form action='/settings_update' method='post'>
-            <p>Password</p>
-            <input type='password' name='pass' id='pass' value={{password}} />
-            <input type="checkbox" onclick="showPassword()">Show Password
-
-            <br>
-            <p>Port</p>
-            <input type='text' name='port' value={{port}} title='Server restart required for port change to take effect'/>
-            <br>
-            <button onclick='this.parentElement.submit()' style='margin-top: 8px;' title='Save'><i class="material-icons">save</i></button>
-        </form>
+        <h2>About</h2>
+        <img src='/static/images/pibot-text.png'/>
+        <p>A robot made using the Raspberry Pi computer capable of doing a few things.</p>
+        <p>See repository on <a href='https://github.com/sccreeper/pibot' target='_blank'>GitHub</p>
+        <br>
+        <p><strong><a href='/about/license'>See license</a></strong></p>
+        <p><i>&copy; Oscar Peace</i></p>
     </div>
 
 </body>
