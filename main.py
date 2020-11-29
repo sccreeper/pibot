@@ -27,6 +27,11 @@ import uuid
 import robot
 import RPi.GPIO as GPIO
 
+#Other modules in run dir
+from component_handler import components as cpnts
+from util import read_file, write_file
+import ui_handler
+
 import os
 import subprocess
 
@@ -42,8 +47,8 @@ from camera_pi import Camera
 motor_A = robot.motor(1, 7, 27)
 motor_B = robot.motor(8, 25, 22)
 
-normal_led_one = robot.LED(2)
-normal_led_two = robot.LED(3)
+
+components = cpnts()
 
 motor_speed = 50
 
@@ -84,13 +89,7 @@ def date_time():
     return return_time
 
 
-def read_file(path):
-    with open(path, 'r') as file:
-        return file.read()
 
-def write_file(path, data):
-    with open(path, 'w') as file:
-        return file.write(data)
 
 
 def update_log(data, type):
@@ -140,7 +139,7 @@ def web_log():
 @app.route('/')
 def web_index():
     if logged_in(request):
-        return render_template('index.html')
+        return render_template('index.html', ui=ui_handler.gen_ui("ui_config.json"))
     else:
         return render_template('login.html')
 
@@ -230,9 +229,30 @@ def web_debug():
 def web_log_plain():
     return '<pre>{}</pre>'.format(debug_log)
 
+#Basically how all components are controlled.
+@app.route('/command', methods=['POST'])
+def web_command():
+    global components
+
+    print("Command recieved")
+
+    commands = request.form['command'].split(';')
+
+    #Command interpreter code
+    for cmd in commands:
+        if cmd.split()[0] == "run":
+            if cmd.split()[1] in components.component_names:
+                getattr(components.components[cmd.split()[1]], cmd.split()[2])()
+            else:
+                continue
+
+        else:
+            continue
+
+    return "Command(s) ran!"
 # e
 # Code for controlling components like the motors and the RGB etc.
-
+#TODO: Refactor this so it works with the new system.
 
 @app.route('/control/<component>/', methods=['POST'])
 def web_control(component=None):
@@ -306,25 +326,25 @@ def web_control(component=None):
                         motor_A.stop()
                         motor_B.stop()
                         return 'Stopped'
-        elif component == 'headlights':
-            if len(request.form) == 0:
-                if request.get_json()['STATUS'] == 'on':
-                    normal_led_one.on()
-                    normal_led_two.on()
-                    return 'Headlights on'
-                else:
-                    normal_led_one.off()
-                    normal_led_two.off()
-                    return 'Headlights off'
-            else:
-                if request.form['STATUS'] == 'on':
-                    normal_led_one.on()
-                    normal_led_two.on()
-                    return 'Headlights on'
-                else:
-                    normal_led_one.off()
-                    normal_led_two.off()
-                    return 'Headlights off'
+        # elif component == 'headlights':
+        #     if len(request.form) == 0:
+        #         if request.get_json()['STATUS'] == 'on':
+        #             normal_led_one.on()
+        #             normal_led_two.on()
+        #             return 'Headlights on'
+        #         else:
+        #             normal_led_one.off()
+        #             normal_led_two.off()
+        #             return 'Headlights off'
+        #     else:
+        #         if request.form['STATUS'] == 'on':
+        #             normal_led_one.on()
+        #             normal_led_two.on()
+        #             return 'Headlights on'
+        #         else:
+        #             normal_led_one.off()
+        #             normal_led_two.off()
+        #             return 'Headlights off'
         elif component == 'camera':
             if request.form['MODE'] == 'picture':
 

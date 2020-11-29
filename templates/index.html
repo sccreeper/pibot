@@ -32,6 +32,9 @@
     <div id='main'>
         <p id='post_request'></p>
 
+        <input id="command" type="text" placeholder="Command"/>
+        <button onclick="submit_command()">Send</button>
+
         <h4>LED Control</h4>
 
         <form method='POST' action='/control/rgb/'>
@@ -41,8 +44,9 @@
             <input type='submit' value='Submit' />
         </form>
 
-        <button onclick='postRequest("/control/headlights/", "STATUS=on")'>LED ON</button>
-        <button onclick='postRequest("/control/headlights/", "STATUS=off")'>LED OFF</button>
+        <div id="ui">
+            {{ ui | safe}}
+        </div>
 
         <br>
 
@@ -119,5 +123,7 @@
 <script src='/static/scripts/ajax_requests.js'></script>
 <script src='/static/scripts/keyboard_control.js'></script>
 <script src='/static/scripts/gamepad_control.js'></script>
+<script src='/static/scripts/commands.js'></script>
+<!-- <script src='/static/scripts/ui.js'></script> -->
 <script src='/static/scripts/debug.js'></script>
 <script src='/static/scripts/photo.js'></script>

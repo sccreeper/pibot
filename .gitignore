@@ -3,3 +3,4 @@ robot.pyc
 todo.todo
 camera_pi.pyc
 changelog
+*.pyc

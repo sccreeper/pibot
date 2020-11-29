@@ -1,0 +1,18 @@
+[
+    {
+        "type" : "button",
+        "data" : {
+            "command" : "run normal_led_one on;run normal_led_two on",
+            "text" : "Headlights on"
+        }
+
+    },
+    {
+        "type" : "button",
+        "data" : {
+            "command" : "run normal_led_one off;run normal_led_two off",
+            "text" : "Headlights off"
+        }
+
+    }
+]

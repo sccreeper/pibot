@@ -1,0 +1,21 @@
+{
+    "normal_led" : {
+        "name" : "LED",
+        "description" : "Simple LED component",
+        "authour" : "Oscar Peace",
+        "file_name" : "led.py",
+        "class_name" : "LED",
+        "type_name" : "normal_led",
+        "requirements" : []
+    },
+
+    "rgb_led" : {
+        "name" : "RGB LED",
+        "description" : "RGB LED component",
+        "authour" : "Oscar Peace",
+        "file_name" : "led.py",
+        "class_name" : "RGB_LED",
+        "type_name" : "rgb_led",
+        "requirements" : []
+    }
+}

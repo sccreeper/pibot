@@ -1,0 +1,16 @@
+[
+    {
+        "type" : "normal_led",
+        "name" : "normal_led_one",
+        "data" : {
+            "pin" : 2
+        }
+    },
+    {
+        "type" : "normal_led",
+        "name" : "normal_led_two",
+        "data" : {
+            "pin" : 3
+        }
+    }
+]
