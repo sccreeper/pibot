@@ -17,5 +17,17 @@
         "class_name" : "RGB_LED",
         "type_name" : "rgb_led",
         "requirements" : []
+    },
+
+    "motor_L298N" : {
+        "name" : "L298N Motor",
+        "description" : "Motor designed to work with the L298N driver",
+        "authour" : "Oscar Peace",
+        "file_name" : "motor.py",
+        "class_name" : "motor_L298N",
+        "type_name" : "motor_L298N",
+        "requirements" : []
     }
+
+
 }

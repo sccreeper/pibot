@@ -1,18 +1,83 @@
 [
     {
         "type" : "button",
+        "id" : "btn_headlight_on",
         "data" : {
             "command" : "run normal_led_one on;run normal_led_two on",
-            "text" : "Headlights on"
+            "text" : "Headlights on",
+            "bind" : null
         }
 
     },
     {
         "type" : "button",
+        "id" : "btn_headlight_off",
         "data" : {
             "command" : "run normal_led_one off;run normal_led_two off",
-            "text" : "Headlights off"
+            "text" : "Headlights off",
+            "bind" : null
         }
+    },
+    {
+        "type" : "html",
+        "id" : "brk_one",
+        "data" : {
+            "html" : "<br>"
+        }
+    },
+    {
+        "type" : "button",
+        "id" : "btn_up",
+        "data" : {
+            "command" : "run motor_one backward;run motor_two forward",
+            "text" : "/\\",
+            "bind" : "w"
+        }
+    },
+    {
+        "type" : "button",
+        "id" : "btn_down",
+        "data" : {
+            "command" : "run motor_one forward;run motor_two backward",
+            "text" : "\\/",
+            "bind" : "s"
+        }
+    },
+    {
+        "type" : "button",
+        "id" : "btn_left",
+        "data" : {
+            "command" : "run motor_one forward;run motor_two forward",
+            "text" : "<",
+            "bind" : "a"
+        }
+    },
+    {
+        "type" : "button",
+        "id" : "btn_right",
+        "data" : {
+            "command" : "run motor_one backward;run motor_two backward",
+            "text" : ">",
+            "bind" : "d"
+        }
+    },
+    {
+        "type" : "button",
+        "id" : "btn_stop",
+        "data" : {
+            "command" : "run motor_one stop;run motor_two stop",
+            "text" : "Stop",
+            "bind" : " "
+        }
+    },
 
+    {
+        "type" : "slider",
+        "id" : "slider_motor_speed",
+        "data" : {
+            "command" : "run motor_one set_speed [slider_motor_speed];run motor_two set_speed [slider_motor_speed]",
+            "min" : 0,
+            "max" : 100
+        }
     }
 ]

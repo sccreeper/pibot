@@ -1,47 +1,26 @@
-document.addEventListener('keydown', function(event) {
-	if (document.getElementById('keyboard_enable').checked == true) {
-		switch(event.keyCode) {
-			case 32:
-				//Space key
-				postRequest("/control/motor/", "DIRECTION=stop");
-				break;
-			case 68:
-				//d
-				postRequest("/control/motor/", "DIRECTION=right")
-				break;
-			case 65:
-				//a
-				postRequest("/control/motor/", "DIRECTION=left");
-				break;
-			case 87:
-				//w
-				postRequest("/control/motor/", "DIRECTION=forward");
-				break;
-			case 83:
-				//s
-				postRequest("/control/motor/", "DIRECTION=backward");
-				break;
-			default:
-				break;	
-				
-		}
-	}else {
-		//Debug menu
-		if(event.keyCode === 72) {
-			document.getElementById("debug").style.display = "block";
+//Generate UI Keybinds
+
+var uiButtons = document.getElementById('ui').getElementsByTagName('button');
+var binds = [];
+
+//Generate list of binds at runtime so don't have to do it each time key is pressed.
+for (var i = 0; i < uiButtons.length; i++) {
+	var element = uiButtons[i];
+	
+	if(element.getAttribute('bind') === '') continue;
+	else {
+		binds.push([element.getAttribute('bind'), element.getAttribute('command')]);
+	}
+}
+
+console.log(binds)
+
+document.addEventListener('keydown', function(e) { 
+	
+	for(var i = 0; i < binds.length; i++) {
+		if(e.key === binds[i][0]) {
+			postRequest('/command', "command=" + binds[i][0]);
 		}
 	}
 });
-
-document.addEventListener('keyup', function(event) {
-
-	//Debug menu
-	if(event.keyCode == 72) {
-		document.getElementById("debug").style.display = "none";
-	} else if(event.keyCode === 68 || event.keyCode === 65 || event.keyCode === 87 || event.keyCode === 83) {
-		postRequest("/control/motor/", "DIRECTION=stop");
-	}
-});
-
-//lol
 

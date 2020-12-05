@@ -125,7 +125,7 @@ chartTemp.canvas.parentNode.style.height = '256px';
 chartTemp.canvas.parentNode.style.width = '512px';
 
 function updateDebugValues() {
-    console.log("lol")
+    //console.log("lol")
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
@@ -145,8 +145,8 @@ function updateDebugValues() {
             addData(chart, debugData.timestamp, debugData.chart.clock.cpu);
             addData(chartTemp, debugData.timestamp, debugData.chart.temp.soc);
             drawPinouts(debugData.pinouts)
-            console.log(debugData.pinouts.left)
-            console.log(debugData.pinouts.right)
+            //console.log(debugData.pinouts.left)
+            //console.log(debugData.pinouts.right)
 
         }
     };

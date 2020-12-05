@@ -44,10 +44,7 @@ from datetime import datetime
 from picamera import PiCamera
 from camera_pi import Camera
 
-motor_A = robot.motor(1, 7, 27)
-motor_B = robot.motor(8, 25, 22)
-
-
+#Initiates the components object
 components = cpnts()
 
 motor_speed = 50
@@ -87,9 +84,6 @@ def date_time():
     return_time = '{}:{}:{}'.format(d.hour, d.minute, d.second)
 
     return return_time
-
-
-
 
 
 def update_log(data, type):
@@ -135,6 +129,9 @@ def web_log():
     else:
         update_log(request.full_path + ' - ' + request.remote_addr, 'web')
 
+    if not logged_in(request) and not request.path == '/login' and not 'static' in request.path:
+        return redirect('/login')
+
 # Index
 @app.route('/')
 def web_index():
@@ -143,29 +140,34 @@ def web_index():
     else:
         return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def web_login():
     global login_tokens
 
-    if request.form['pass'] == config['pass']:
-        #Generate ID
+    if request.method == 'POST':
 
-        while True:
-            token = uuid.uuid4()
+        if request.form['pass'] == config['pass']:
+            #Generate ID
 
-            if token in login_tokens:
-                continue
-            else:
-                break
+            while True:
+                token = uuid.uuid4()
 
-        resp = make_response(redirect('/'))
-        resp.set_cookie('t', str(token))
+                if token in login_tokens:
+                    continue
+                else:
+                    break
 
-        login_tokens.append(str(token))
+            resp = make_response(redirect('/'))
+            resp.set_cookie('t', str(token))
 
-        return resp
+            login_tokens.append(str(token))
+
+            return resp
+        else:
+            return render_template('login.html', message='Incorrect password')
+    
     else:
-        return render_template('login.html', message='Incorrect password')
+        return render_template('login.html')
 
 
 
@@ -242,7 +244,10 @@ def web_command():
     for cmd in commands:
         if cmd.split()[0] == "run":
             if cmd.split()[1] in components.component_names:
-                getattr(components.components[cmd.split()[1]], cmd.split()[2])()
+                if len(cmd.split()) <= 3:
+                    getattr(components.components[cmd.split()[1]], cmd.split()[2])()
+                else:
+                    getattr(components.components[cmd.split()[1]], cmd.split()[2])(cmd.split()[3].split(','))
             else:
                 continue
 
@@ -265,86 +270,6 @@ def web_control(component=None):
             main_led.colour(int(request.form['LED_R']), int(
                 request.form['LED_G']), int(request.form['LED_B']))
             return redirect('/')
-        elif component == 'motor':
-            try:
-                if len(request.form) == 0:
-                    motor_speed = int(request.get_json()['SPEED'])
-
-                    motor_A.set_speed(motor_speed)
-                    motor_B.set_speed(motor_speed)
-
-                    return 'Speed changed to {}%'.format(motor_speed)
-
-                else:
-                    motor_speed = int(request.form['SPEED'])
-
-                    motor_A.set_speed(motor_speed)
-                    motor_B.set_speed(motor_speed)
-
-                    return 'Speed changed to {}%'.format(motor_speed)
-            except KeyError:
-                if len(request.form) == 0:
-                    if request.get_json()['DIRECTION'] == 'forward':
-                        motor_A.backward(motor_speed)
-                        motor_B.forward(motor_speed)
-                        return 'Motors going forward'
-                    elif request.get_json()['DIRECTION'] == 'backward':
-                        motor_A.forward(motor_speed)
-                        motor_B.backward(motor_speed)
-                        return 'Motors going backward'
-                    elif request.get_json()['DIRECTION'] == 'left':
-                        motor_A.forward(motor_speed)
-                        motor_B.forward(motor_speed)
-                        return 'Turning left'
-                    elif request.get_json()['DIRECTION'] == 'right':
-                        motor_A.backward(motor_speed)
-                        motor_B.backward(motor_speed)
-                        return 'Turning right'
-                    else:
-                        motor_A.stop()
-                        motor_B.stop()
-                        return 'Stopped'
-                else:
-                    if request.form['DIRECTION'] == 'forward':
-                        # Backwards beacause I soldered it wrong, you might want to change this for your own code.
-                        motor_A.backward(motor_speed)
-                        motor_B.forward(motor_speed)
-                        return 'Motors going forward'
-                    elif request.form['DIRECTION'] == 'backward':
-                        motor_A.forward(motor_speed)
-                        motor_B.backward(motor_speed)
-                        return 'Motors going backward'
-                    elif request.form['DIRECTION'] == 'left':
-                        motor_A.forward(motor_speed)
-                        motor_B.forward(motor_speed)
-                        return 'Turning left'
-                    elif request.form['DIRECTION'] == 'right':
-                        motor_A.backward(motor_speed)
-                        motor_B.backward(motor_speed)
-                        return 'Turning right'
-                    else:
-                        motor_A.stop()
-                        motor_B.stop()
-                        return 'Stopped'
-        # elif component == 'headlights':
-        #     if len(request.form) == 0:
-        #         if request.get_json()['STATUS'] == 'on':
-        #             normal_led_one.on()
-        #             normal_led_two.on()
-        #             return 'Headlights on'
-        #         else:
-        #             normal_led_one.off()
-        #             normal_led_two.off()
-        #             return 'Headlights off'
-        #     else:
-        #         if request.form['STATUS'] == 'on':
-        #             normal_led_one.on()
-        #             normal_led_two.on()
-        #             return 'Headlights on'
-        #         else:
-        #             normal_led_one.off()
-        #             normal_led_two.off()
-        #             return 'Headlights off'
         elif component == 'camera':
             if request.form['MODE'] == 'picture':
 

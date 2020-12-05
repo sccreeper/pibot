@@ -12,5 +12,25 @@
         "data" : {
             "pin" : 3
         }
+    },
+    {
+        "type" : "motor_L298N",
+        "name" : "motor_one",
+        "data" : {
+            "pin_one" : 1,
+            "pin_two" : 7,
+            "pin_pwm" : 22
+        }
+        
+    },
+    {
+        "type" : "motor_L298N",
+        "name" : "motor_two",
+        "data" : {
+            "pin_one" : 8,
+            "pin_two" : 25,
+            "pin_pwm" : 27
+        }
+        
     }
 ]
