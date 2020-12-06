@@ -129,8 +129,11 @@ def web_log():
     else:
         update_log(request.full_path + ' - ' + request.remote_addr, 'web')
 
-    if not logged_in(request) and not request.path == '/login' and not 'static' in request.path:
+    if not logged_in(request) and not request.path == '/login' and not 'static' in request.path and not 'android' in request.headers.get('User-Agent').lower():
         return redirect('/login')
+    elif 'android' in request.headers.get('User-Agent').lower():
+        if not request.form["t"] in login_tokens:
+            return abort(403)
 
 # Index
 @app.route('/')
@@ -168,7 +171,6 @@ def web_login():
     
     else:
         return render_template('login.html')
-
 
 
 # Debug
@@ -382,9 +384,32 @@ def web_about():
 def web_about_license():
     return "<pre>" + read_file('LICENSE') + "</pre>"
 
+#Mobile views
+@app.route('/m/login', methods=['POST'])
+def mobile_login():
+    global login_tokens
+
+    if request.form['pass'] == config['pass']:
+        #Generate ID
+
+        while True:
+            token = uuid.uuid4()
+
+            if token in login_tokens:
+                continue
+            else:
+                break
+
+        return str(token)
+    else:
+        return "pwd_incrt"
+
+@app.route('/m/get_ui')
+def mobile_get_ui():
+    return read_file("ui_config.json")
+
+
 # Generation function
-
-
 def gen(camera):
     """Video streaming generator function."""
     while True:

@@ -18,7 +18,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
         DataChunkSize = 10000
 
-        command = '(echo "--video boundary--"; raspivid -w 1920 -h 1080 -fps 30 -pf high -n -t 0 -o -;) | gst-launch-1.0 -e -q fdsrc fd=0 ! video/x-h264,width=1920,height=1080,framerate=30/1,stream-format=byte-stream ! h264parse ! mp4mux streamable=true fragment-duration=10 presentation-time=true ! filesink location=/dev/stdout'
+        command = '(echo "--video boundary--"; raspivid -w 1920 -h 1080 -fps 30 -pf high -n -t 0 -o -;) | gst-launch-1.0 -e -q fdsrc fd=0 ! video/x-h264,width=1920,height=1080,framerate=30/1,stream-format=byte-stream,num_buffers=300 ! h264parse ! mp4mux streamable=true fragment-duration=10 presentation-time=true ! filesink location=/dev/stdout'
         print("running command: %s" % (command, ))
         p = subprocess.Popen(command, stdout=subprocess.PIPE, bufsize=-1, shell=True)
 
