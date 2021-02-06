@@ -113,6 +113,15 @@ def update_log(data, type):
 def logged_in(request):
     global login_tokens
 
+    if request.method == "POST":
+        try:
+            if request.form["t"] in login_tokens:
+                return True
+            else:
+                return False
+        except KeyError:
+            return False
+
     if request.cookies.get('t') == None:
         return False
 
@@ -129,11 +138,8 @@ def web_log():
     else:
         update_log(request.full_path + ' - ' + request.remote_addr, 'web')
 
-    if not logged_in(request) and not request.path == '/login' and not 'static' in request.path and not 'android' in request.headers.get('User-Agent').lower():
+    if not logged_in(request) and not request.path == '/login' and not request.path == '/m/login':
         return redirect('/login')
-    elif 'android' in request.headers.get('User-Agent').lower():
-        if not request.form["t"] in login_tokens:
-            return abort(403)
 
 # Index
 @app.route('/')
@@ -171,7 +177,6 @@ def web_login():
     
     else:
         return render_template('login.html')
-
 
 # Debug
 @app.route('/debug')
@@ -399,12 +404,14 @@ def mobile_login():
                 continue
             else:
                 break
+        
+        login_tokens.append(str(token))        
 
         return str(token)
     else:
-        return "pwd_incrt"
+        return "pwd_err"
 
-@app.route('/m/get_ui')
+@app.route('/m/get_ui', methods=['POST', 'GET'])
 def mobile_get_ui():
     return read_file("ui_config.json")
 

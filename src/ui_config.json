@@ -72,6 +72,14 @@
     },
 
     {
+        "type" : "html",
+        "id" : "brk_one",
+        "data" : {
+            "html" : "<br>"
+        }
+    },
+
+    {
         "type" : "slider",
         "id" : "slider_motor_speed",
         "data" : {
